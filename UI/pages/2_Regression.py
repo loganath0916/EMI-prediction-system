@@ -1,11 +1,22 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import os
+import joblib
 
-# Load Model
-reg_model = joblib.load(
-    "../Models/best_regression_model.pkl"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+model_path = os.path.join(
+    BASE_DIR,
+    "Models",
+    "best_regression_model.pkl"
 )
+
+# DEBUG
+st.write("Current Directory:", os.getcwd())
+st.write("Model Path:", model_path)
+
+reg_model = joblib.load(model_path)
 
 # Title
 st.title("💰 EMI Amount Prediction")

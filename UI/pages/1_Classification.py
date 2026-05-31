@@ -1,11 +1,23 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import os
+import joblib
 
-# Load Model
-cls_model = joblib.load(
-    "../Models/best_classification_model.pkl"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+model_path = os.path.join(
+    BASE_DIR,
+    "Models",
+    "best_classification_model.pkl"
 )
+
+# DEBUG
+st.write("Current Directory:", os.getcwd())
+st.write("Model Path:", model_path)
+
+
+cls_model = joblib.load(model_path)
 
 # Title
 st.title("✅ EMI Eligibility Prediction")
