@@ -60,18 +60,6 @@ current_emi_amount = st.number_input(
     value=0
 )
 
-requested_amount = st.number_input(
-    "Requested Amount",
-    min_value=1000,
-    value=500000
-)
-
-requested_tenure = st.number_input(
-    "Requested Tenure (Months)",
-    min_value=6,
-    value=60
-)
-
 # Prediction
 if st.button("Predict EMI Amount"):
 
@@ -82,9 +70,7 @@ if st.button("Predict EMI Amount"):
             years_of_employment,
             credit_score,
             bank_balance,
-            current_emi_amount,
-            requested_amount,
-            requested_tenure
+            current_emi_amount
         ]],
         columns=[
             "age",
@@ -92,9 +78,7 @@ if st.button("Predict EMI Amount"):
             "years_of_employment",
             "credit_score",
             "bank_balance",
-            "current_emi_amount",
-            "requested_amount",
-            "requested_tenure"
+            "current_emi_amount"
         ]
     )
 
