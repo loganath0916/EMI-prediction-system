@@ -2,110 +2,46 @@ import streamlit as st
 import pandas as pd
 import os
 
-# Page Config
-st.set_page_config(page_title="MLflow Dashboard", page_icon="📊")
+st.set_page_config(page_title="ML Dashboard", page_icon="📊")
 
-st.title("📊 MLflow Dashboard")
+st.title("📊 Model Performance Dashboard")
 st.markdown("---")
 
-# Connect to MLflow Database
-BASE_DIR = os.path.dirname(
+# Model Files Status
+st.subheader("📦 Saved Models")
+
+base_dir = os.path.dirname(
     os.path.dirname(
         os.path.dirname(__file__)
     )
 )
 
-db_path = os.path.join(
-    BASE_DIR,
+classification_model = os.path.join(
+    base_dir,
     "Models",
-    "mlflow.db"
+    "best_classification_model.pkl"
 )
 
-mlflow.set_tracking_uri(
-    f"sqlite:///{db_path}"
+regression_model = os.path.join(
+    base_dir,
+    "Models",
+    "best_regression_model.pkl"
 )
 
-# Debug (remove later)
-st.write("MLflow DB Path:", db_path)
-
-client = MlflowClient()
-
-# ==========================
-# Experiments
-# ==========================
-st.subheader("📁 Experiments")
-
-experiments = mlflow.search_experiments()
-
-if experiments:
-    exp_data = []
-
-    for exp in experiments:
-        exp_data.append({
-            "Experiment ID": exp.experiment_id,
-            "Experiment Name": exp.name
-        })
-
-    st.dataframe(pd.DataFrame(exp_data), use_container_width=True)
-
+if os.path.exists(classification_model):
+    st.success("✅ Classification Model Available")
 else:
-    st.warning("No experiments found.")
+    st.error("❌ Classification Model Missing")
 
-# ==========================
-# Runs
-# ==========================
-st.subheader("🏃 Recent Runs")
-
-runs = mlflow.search_runs()
-
-if len(runs) > 0:
-
-    display_cols = []
-
-    for col in runs.columns:
-        if (
-            "metrics" in col
-            or "params" in col
-            or col == "run_id"
-            or col == "status"
-        ):
-            display_cols.append(col)
-
-    st.dataframe(
-        runs[display_cols],
-        use_container_width=True
-    )
-
+if os.path.exists(regression_model):
+    st.success("✅ Regression Model Available")
 else:
-    st.warning("No runs found.")
+    st.error("❌ Regression Model Missing")
 
-# ==========================
-# Best Models
-# ==========================
-st.subheader("🤖 Registered Models")
+st.markdown("---")
 
-try:
-    models = client.search_registered_models()
-
-    model_data = []
-
-    for model in models:
-        model_data.append({
-            "Model Name": model.name
-        })
-
-    st.dataframe(
-        pd.DataFrame(model_data),
-        use_container_width=True
-    )
-
-except:
-    st.info("No registered models available.")
-
-# ==========================
-# Project Metrics
-# ==========================
-st.subheader("📈 Project Metrics")
+# Performance Metrics
+st.subheader("📈 Model Metrics")
 
 col1, col2 = st.columns(2)
 
@@ -121,13 +57,28 @@ with col2:
         value="0.60"
     )
 
-# ==========================
-# Model Files
-# ==========================
-st.subheader("📦 Saved Models")
+st.markdown("---")
 
-st.success("✅ best_classification_model.pkl")
-st.success("✅ best_regression_model.pkl")
+# Deployment Status
+st.subheader("🚀 Deployment Status")
+
+status_df = pd.DataFrame({
+    "Component": [
+        "Classification Model",
+        "Regression Model",
+        "Streamlit App"
+    ],
+    "Status": [
+        "Running",
+        "Running",
+        "Active"
+    ]
+})
+
+st.dataframe(
+    status_df,
+    use_container_width=True
+)
 
 st.markdown("---")
-st.caption("EMI Prediction System - MLflow Monitoring Dashboard")
+st.caption("EMI Prediction System Dashboard")
