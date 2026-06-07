@@ -1,29 +1,39 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 import os
 
-st.set_page_config(page_title="ML Dashboard", page_icon="📊")
+# ==================================
+# PAGE CONFIG
+# ==================================
+st.set_page_config(
+    page_title="Model Monitoring Dashboard",
+    page_icon="📊",
+    layout="wide"
+)
 
 st.title("📊 Model Performance Dashboard")
 st.markdown("---")
 
-# Model Files Status
+# ==================================
+# MODEL FILE STATUS
+# ==================================
 st.subheader("📦 Saved Models")
 
-base_dir = os.path.dirname(
+BASE_DIR = os.path.dirname(
     os.path.dirname(
         os.path.dirname(__file__)
     )
 )
 
 classification_model = os.path.join(
-    base_dir,
+    BASE_DIR,
     "Models",
     "best_classification_model.pkl"
 )
 
 regression_model = os.path.join(
-    base_dir,
+    BASE_DIR,
     "Models",
     "best_regression_model.pkl"
 )
@@ -40,33 +50,150 @@ else:
 
 st.markdown("---")
 
-# Performance Metrics
-st.subheader("📈 Model Metrics")
+# ==================================
+# CLASSIFICATION COMPARISON
+# ==================================
+st.subheader("🏆 Classification Model Comparison")
 
-col1, col2 = st.columns(2)
+classification_df = pd.DataFrame({
+    "Algorithm": [
+        "Logistic Regression",
+        "Random Forest",
+        "XGBoost"
+    ],
+    "Accuracy": [
+        0.84,
+        0.86,
+        0.87
+    ],
+    "Precision": [
+        0.83,
+        0.85,
+        0.87
+    ],
+    "Recall": [
+        0.82,
+        0.84,
+        0.86
+    ]
+})
 
-with col1:
-    st.metric(
-        label="Classification Accuracy",
-        value="87%"
-    )
+st.dataframe(
+    classification_df,
+    use_container_width=True
+)
 
-with col2:
-    st.metric(
-        label="Regression R² Score",
-        value="0.60"
-    )
+fig1 = px.bar(
+    classification_df,
+    x="Algorithm",
+    y="Accuracy",
+    color="Algorithm",
+    title="Classification Accuracy Comparison"
+)
+
+st.plotly_chart(
+    fig1,
+    use_container_width=True
+)
 
 st.markdown("---")
 
-# Deployment Status
+# ==================================
+# REGRESSION COMPARISON
+# ==================================
+st.subheader("📈 Regression Model Comparison")
+
+regression_df = pd.DataFrame({
+    "Algorithm": [
+        "Linear Regression",
+        "Random Forest",
+        "XGBoost"
+    ],
+    "R2 Score": [
+        0.567,
+        0.599,
+        0.601
+    ],
+    "RMSE": [
+        5113,
+        4921,
+        4909
+    ],
+    "MAE": [
+        3728,
+        3547,
+        3537
+    ]
+})
+
+st.dataframe(
+    regression_df,
+    use_container_width=True
+)
+
+fig2 = px.bar(
+    regression_df,
+    x="Algorithm",
+    y="R2 Score",
+    color="Algorithm",
+    title="Regression R² Score Comparison"
+)
+
+st.plotly_chart(
+    fig2,
+    use_container_width=True
+)
+
+fig3 = px.bar(
+    regression_df,
+    x="Algorithm",
+    y="RMSE",
+    color="Algorithm",
+    title="RMSE Comparison (Lower is Better)"
+)
+
+st.plotly_chart(
+    fig3,
+    use_container_width=True
+)
+
+st.markdown("---")
+
+# ==================================
+# SELECTED MODELS
+# ==================================
+st.subheader("🥇 Selected Models")
+
+st.success("""
+Best Classification Model: XGBoost
+
+Accuracy: 87%
+
+Selected for EMI Eligibility Prediction
+""")
+
+st.success("""
+Best Regression Model: XGBoost
+
+R² Score: 0.601
+
+RMSE: 4909
+
+Selected for EMI Amount Prediction
+""")
+
+st.markdown("---")
+
+# ==================================
+# DEPLOYMENT STATUS
+# ==================================
 st.subheader("🚀 Deployment Status")
 
-status_df = pd.DataFrame({
+deployment_df = pd.DataFrame({
     "Component": [
         "Classification Model",
         "Regression Model",
-        "Streamlit App"
+        "Streamlit Application"
     ],
     "Status": [
         "Running",
@@ -76,9 +203,9 @@ status_df = pd.DataFrame({
 })
 
 st.dataframe(
-    status_df,
+    deployment_df,
     use_container_width=True
 )
 
 st.markdown("---")
-st.caption("EMI Prediction System Dashboard")
+st.caption("EMI Prediction System - Model Monitoring Dashboard")
